@@ -54,23 +54,38 @@
         // let gameStart = false;
         
         pen.font = "30px Arial";
-        pen.fillText("Press Space or Arrow Up to start the game", gameBoard.width / 2 - 275, gameBoard.height / 2);
+        
+        const deviceType = detectDevice();
+        console.log(deviceType);
+        if (deviceType == "mobile") {
+            pen.fillText("Tap the screen to start the game", gameBoard.width / 2 - 200, gameBoard.height / 2);
+        } else {
+            pen.fillText("Press Space or Arrow Up to start the game", gameBoard.width / 2 - 275, gameBoard.height / 2);
+        }
+
+        function detectDevice() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isMobile = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|tablet/i.test(userAgent);
+            return isMobile ? "mobile" : "desktop";
+        }
 
         function startGame(event) {
-            if (event.key == " " || event.key == "ArrowUp") {
+            if (event.key == " " || event.key == "ArrowUp" || event.type == "click") {
                 pen.clearRect(0, 0, gameBoard.width, gameBoard.height);
                 init();
             }
         }
 
-        const gameStartDetect = document.addEventListener("keydown", startGame);
+        const gameStartDetect1 = document.addEventListener("keydown", startGame);
+        const gameStartDetect2 = gameBoard.addEventListener("click", startGame);
 
         function init() {
             document.removeEventListener("keydown", startGame);
+            gameBoard.removeEventListener("click", startGame);
             drawBird(birdY);
             updateBarrier();
-            // drawBarriers();
             requestAnimationFrame(updateBird); 
+            setInterval(generateBarrier, 2000);
         }
     
         function drawBird(y) {
@@ -113,7 +128,6 @@
                 y: Math.floor(Math.random() * (-200)) - 100 // Adjust this value for the gap between the barriers
             });
         }
-        setInterval(generateBarrier, 2000); // Adjust this value for the speed of the barrier movement
 
         function checkCollision() {
             const birdLeft = gameBoard.width / 2;
@@ -175,13 +189,14 @@
                 pen.drawImage(barrier, barrierPosition[i].x, barrierPosition[i].y, 500, 1000);
             }
         }
+
+        function jump() {
+            birdJumpAnimationSpeed = -6;
+            jumping = true;
+        }
     
-        document.addEventListener("keydown", function (event) {
-            if (event.key === " " || event.key === "ArrowUp") {
-                birdJumpAnimationSpeed = -6;
-                jumping = true;
-            }
-        })
+        document.addEventListener("keydown", jump)
+        gameBoard.addEventListener("click", jump)
     </script>
 </body>
 </html> 
