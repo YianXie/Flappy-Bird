@@ -53,6 +53,8 @@
         let barrierVelocity = 2; // Adjust this value for the speed of the barrier
         let gameOver = false;
         let barrierInterval = null;
+        const canvasBarrierWidth = 500;
+        const canvasBarrierHeight = 1000;
         
         pen.font = "30px Arial";
         
@@ -113,9 +115,6 @@
 
             // Draw Score
             drawScore();
-
-            // Update game board data
-            gameBoardData = pen.getImageData(0, 0, gameBoard.width, gameBoard.height);
         }
         
         // whole picture height = 859px
@@ -130,7 +129,6 @@
                 y: Math.floor(Math.random() * (-200)) - 100, // Adjust this value for the gap between the barriers
                 alreadyChecked: false
             });
-            console.log(barrierPosition);
         }
 
         function checkCollision() {
@@ -150,12 +148,12 @@
                 const barrierTop = barrier.y;
                 const barrierBottom = barrier.y;
                 const barrierLeft = barrier.x;
-                const barrierRight = barrier.x + 500;
+                const barrierRight = barrier.x + canvasBarrierWidth;
 
                 const emptySpaceTop = Math.floor(barrier.y + 304/859*1000);
                 const emptySpaceBottom = Math.floor(barrier.y + 525/859*1000);
-                const emptySpaceLeft = Math.floor(barrier.x + 377/840*500);
-                const emptySpaceRight = Math.floor(barrier.x + 468/840*500);
+                const emptySpaceLeft = Math.floor(barrier.x + 377/840*canvasBarrierWidth);
+                const emptySpaceRight = Math.floor(barrier.x + 468/840*canvasBarrierWidth);
                 
                 // 碰撞检测：检查小鸟的任何部分是否与柱子重叠
                 if (birdRight > barrierLeft && birdLeft < barrierRight &&
@@ -188,7 +186,7 @@
 
             if (barrierPosition.length > 0) {
                 for (let i = 0; i < barrierPosition.length; i++) {
-                    if (barrierPosition[i].x + 500/2 < gameBoard.width / 2 && !barrierPosition[i].alreadyChecked) {
+                    if (barrierPosition[i].x + canvasBarrierWidth/2 < gameBoard.width / 2 && !barrierPosition[i].alreadyChecked) {
                         updateScore();
                         barrierPosition[i].alreadyChecked = true;
                     }
@@ -196,6 +194,8 @@
             }
 
             drawScore();
+
+            gameBoardData = pen.getImageData(0, 0, gameBoard.width, gameBoard.height);
             
             requestAnimationFrame(updateBird);
         }
@@ -203,7 +203,7 @@
         function drawBarriers() {
             // draw all barriers
             for (let i = 0; i < barrierPosition.length; i++) {
-                pen.drawImage(barrier, barrierPosition[i].x, barrierPosition[i].y, 500, 1000);
+                pen.drawImage(barrier, barrierPosition[i].x, barrierPosition[i].y, canvasBarrierWidth, 1000);
             }
         }
 
@@ -214,7 +214,6 @@
 
         function updateScore() {
             score++;
-            console.log("Score: " + score);
         }
 
         function drawScore() {
